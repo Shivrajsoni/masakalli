@@ -2,6 +2,7 @@
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import GithubProvider from "next-auth/providers/github"
+import { prismaClient } from "@/app/lib/db";
 
 const handler = NextAuth({
     providers:[
@@ -14,7 +15,24 @@ const handler = NextAuth({
             clientSecret:process.env.GITHUB_CLIENT_SECRET || ''
         })
 
-    ]
+    ],
+    callbacks:{
+        async signIn(params){
+            console.log(params);
+            
+            try{
+                await prismaClient.user.create({
+                    email:params.user.email,
+                    provider:params.account?.provider
+                })
+
+            }catch(error){
+                console.error(error);
+            }
+
+            return true
+        }
+    }
 
 
 })

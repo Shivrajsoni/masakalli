@@ -14,39 +14,38 @@ datasource db {
 }
 
 model User {
-  id String @id @default(uuid())
-  email String
+  id       String    @id @default(uuid())
+  email    String    @unique
   provider Provider
-  streams Stream[]
-  upvotes Upvotes[]
+  streams  Stream[]
+  upvotes  Upvotes[]
 }
 
 model Stream {
-  id String @id @default(uuid())
-  type Streamtype
-  active Boolean @default(true)
-  upvotes Upvotes[]
-  userId String
-  user User @relation(fields: [userId],references: [id])
+  id          String     @id @default(uuid())
+  type        Streamtype
+  url         String
+  extractedId String
+  active      Boolean    @default(true)
+  upvotes     Upvotes[]
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
 }
 
-
 model Upvotes {
-  id String @id @default(uuid())
-  userId String
+  id       String @id @default(uuid())
+  userId   String
   streamId String
-  user User @relation(fields: [userId],references: [id])
-  stream Stream @relation(fields: [streamId],references: [id])
-  @@unique([userId,streamId])
+  user     User   @relation(fields: [userId], references: [id])
+  stream   Stream @relation(fields: [streamId], references: [id])
 
+  @@unique([userId, streamId])
 }
 
 enum Streamtype {
   Spotify
   Youtube
 }
-
-
 
 enum Provider {
   Github
