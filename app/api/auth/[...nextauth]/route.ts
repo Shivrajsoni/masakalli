@@ -18,12 +18,18 @@ const handler = NextAuth({
     ],
     callbacks:{
         async signIn(params){
+            if(!params.user.email){
+                return false
+            }
             console.log(params);
             
             try{
                 await prismaClient.user.create({
-                    email:params.user.email,
-                    provider:params.account?.provider
+                    data:{
+                        email:params.user.email ??"",
+                        provider:"Github"
+                    }
+                   
                 })
 
             }catch(error){
